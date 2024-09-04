@@ -2,7 +2,7 @@
 TARGET = main
 LD_SCRIPT = stm32f103c8t6_ls.ld
 MCU_SPEC = cortex-m3
-STARTUP = stm32f103c8t6_startup.s
+STARTUP = ../startup/stm32f103c8t6_startup.c
 
 CC = arm-none-eabi-gcc
 OC = arm-none-eabi-objcopy
