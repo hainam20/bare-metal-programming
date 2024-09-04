@@ -1,6 +1,6 @@
 
 TARGET = main
-LD_SCRIPT = stm32f103c8t6_ls.ld
+LD_SCRIPT = ../linker/stm32f103c8t6_ls.ld
 MCU_SPEC = cortex-m3
 STARTUP = ../startup/stm32f103c8t6_startup.c
 
