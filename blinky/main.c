@@ -24,6 +24,6 @@ int main(void)
 		/* set PC13 in GPIOC_BSRR register */
 		GPIOC_BSRR = (1 << 13);
 		/* delay loop */
-		for(i = 0; i < 500000; ++i);
+		for(i = 0; i < 100000; ++i);
 	}
 }
