@@ -93,8 +93,8 @@ typedef struct
 	__vo uint32_t RCC_BDCR;	/* Backup domain control register		address	offset: 0x20 */
 	__vo uint32_t CSR;	/* control/status register			address offset: 0x24 */
 	__vo uint32_t AHBSTR;	/* AHB peripheral clock reset register 		address offset: 0x28 */
-	__vo uint32_t CFGR2	/* clock configuration register2		address offset: 0x2c */
-} RCC_RegDef_t;
+	__vo uint32_t CFGR2;	/* clock configuration register2		address offset: 0x2c */
+}RCC_RegDef_t;
 
 /*
  * peripheral defination
@@ -113,7 +113,7 @@ typedef struct
  * RCC defination
  */
 
-#define RCC		((RCC_RegDef_t *)RCC_BASE_ADDR)
+#define RCC		((RCC_RegDef_t *)RCC_BASEADDR)
 
 /*
  * clock enable macros for GPIOx peripherals
@@ -124,6 +124,18 @@ typedef struct
 #define GPIOC_PCLK_EN()		(RCC->APB2ENR |= (1 << 4))
 #define GPIOD_PCLK_EN()		(RCC->APB2ENR |= (1 << 5))
 #define GPIOE_PCLK_EN()		(RCC->APB2ENR |= (1 << 6))
+
+/*
+ * Clock disable macros for GPIOx peripherals
+ */
+
+#define GPIOA_PCLK_DI()		(RCC->APB2ENR &= ~(1 << 2))
+#define GPIOB_PCLK_DI()		(RCC->APB2ENR &= ~(1 << 3))
+#define GPIOC_PCLK_DI()		(RCC->APB2ENR &= ~(1 << 4))
+#define GPIOD_PCLK_DI()		(RCC->APB2ENR &= ~(1 << 5))
+#define GPIOE_PCLK_DI()		(RCC->APB2ENR &= ~(1 << 6))
+
+
 
 /* 
  * clock enable macros for I2Cx peripherals 
@@ -146,7 +158,7 @@ typedef struct
 
 #define USART1_PCLK_EN()	(RCC->APB2ENR |= (1 << 14))
 #define USART2_PCLK_EN()	(RCC->APB1ENR |= (1 << 17))
-#define USART2_PCLK_EN()	(RCC->APB1ENR |= (1 << 18))
+#define USART3_PCLK_EN()	(RCC->APB1ENR |= (1 << 18))
 
 
 /*
@@ -177,9 +189,11 @@ typedef struct
  */
 #define USART1_PCLK_DI()        (RCC->APB2ENR &= ~(1 << 14))
 #define USART2_PCLK_DI()        (RCC->APB1ENR &= ~(1 << 17))
-#define USART2_PCLK_DI()        (RCC->APB1ENR &= ~(1 << 18))
+#define USART3_PCLK_DI()        (RCC->APB1ENR &= ~(1 << 18))
 
 
+#define ENABLE 			1
+#define DISABLE 		0
 
 
 #endif
