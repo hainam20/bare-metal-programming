@@ -1,14 +1,14 @@
-#ifndef INC_STM32F103XX_H_
-#define INC_STM32F103XX_H_
+#pragma once
+#ifndef __STM32F103XX_H__
+#define __STM32F103XX_H__
 
-#include<stdint.h>
-
+#include <stdint.h>
 #define __vo volatile
 /*
  * base address of flash and ram memories
  */
 
-#define FALSH_BASEADDR 		0x08000000U
+#define FLASH_BASEADDR 		0x08000000U
 #define SRAM_BASEADDR 		0x20000000U	/* 96kb */
 #define ROM_BASEADDR		0x1FFFF000U 	/* system memory */
 
@@ -82,12 +82,12 @@ typedef struct
 
 typedef struct
 {
-	__vo uint32_t CR;	/* clock control register 		address offset: 0x00 */
-	__vo uint32_t CFGR;	/* clock config register 		address offset: 0x04 */
-	__vo uint32_t CIR;	/* clock interupt register		address offset: 0x08 */
-	__vo uint32_t APB2RSTR;	/* APB2 peripheral reset register 	address offset: 0x0c */
-	__vo uint32_t APB1RSTR;	/* APB1 peripheral reset register	address offset: 0x10 */
-	__vo uint32_t AHBENR;	/* AHB peripheral clock enable register	address offset: 0x14 */
+	__vo uint32_t CR;	/* clock control register 			address offset: 0x00 */
+	__vo uint32_t CFGR;	/* clock config register 			address offset: 0x04 */
+	__vo uint32_t CIR;	/* clock interupt register			address offset: 0x08 */
+	__vo uint32_t APB2RSTR;	/* APB2 peripheral reset register 		address offset: 0x0c */
+	__vo uint32_t APB1RSTR;	/* APB1 peripheral reset register		address offset: 0x10 */
+	__vo uint32_t AHBENR;	/* AHB peripheral clock enable register		address offset: 0x14 */
 	__vo uint32_t APB2ENR;	/* APB2 peripheral clock enable register	address offset: 0x18 */
 	__vo uint32_t APB1ENR;	/* APB1 peripheral clock enable register	address offset: 0x1c */
 	__vo uint32_t RCC_BDCR;	/* Backup domain control register		address	offset: 0x20 */
@@ -96,13 +96,73 @@ typedef struct
 	__vo uint32_t CFGR2;	/* clock configuration register2		address offset: 0x2c */
 }RCC_RegDef_t;
 
+
+
+/*
+ * EXTI register defination structure
+ */
+
+
+typedef struct
+{
+	__vo uint32_t EXTI_IMR;
+	__vo uint32_t EXTI_EMR;
+	__vo uint32_t EXTI_RTSR;
+	__vo uint32_t EXTI_FTSR;
+	__vo uint32_t EXTI_SWIER;
+	__vo uint32_t EXTI_PR; 
+}EXTI_RegDef_t;
+
+
+/*
+ * NVIC register defination structure
+ */
+
+typedef struct
+{
+	__vo uint32_t ISR[2];
+	uint32_t reserved0[30];
+	__vo uint32_t ICER[2];
+	uint32_t reserved1[34];
+	__vo uint32_t ISPR[2];
+	uint32_t reserved2[66];
+	__vo uint32_t ICPR[2];
+	uint32_t reserved3[30];
+	__vo uint32_t IABR[2];
+	uint32_t reserved4[62];
+	__vo uint32_t IPR[20];
+	
+	__vo uint32_t STIR;
+}NVIC_RegDef_t;
+
+
+/*
+ * Define BIT mask
+ */
+
+#define BIT0		0x0001U
+#define BIT1		0x0002U
+#define BIT2		0x0004U
+#define BIT3		0x0008U
+#define BIT4		0x0010U
+#define BIT5		0x0020U
+#define BIT6		0x0040U
+#define BIT7		0x0080U
+#define BIT8		0x0100U
+#define BIT9		0x0200U
+#define BIT10		0x0400U
+#define BIT11		0x0800U
+#define BIT12		0x1000U
+#define BIT13		0x2000U
+#define BIT14		0x4000U
+#define BIT15		0x8000U
+
 /*
  * peripheral defination
  */
 
 #define GPIOA 		((GPIO_RegDef_t *)GPIOA_BASEADDR)
 #define GPIOB 		((GPIO_RegDef_t *)GPIOB_BASEADDR)
-#define GPIOC 		((GPIO_RegDef_t *)GPIOC_BASEADDR)
 #define GPIOC 		((GPIO_RegDef_t *)GPIOC_BASEADDR)
 #define GPIOD 		((GPIO_RegDef_t *)GPIOD_BASEADDR)
 #define GPIOE 		((GPIO_RegDef_t *)GPIOE_BASEADDR)
@@ -114,6 +174,7 @@ typedef struct
  */
 
 #define RCC		((RCC_RegDef_t *)RCC_BASEADDR)
+#define EXTI 		((EXTI_RegDef_t *)EXTI_BASEADDR)
 
 /*
  * clock enable macros for GPIOx peripherals
@@ -194,6 +255,5 @@ typedef struct
 
 #define ENABLE 			1
 #define DISABLE 		0
-
 
 #endif

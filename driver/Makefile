@@ -2,10 +2,10 @@ TARGET = main
 
 # Toolchain definition
 CC = arm-none-eabi-gcc
-OC = arm-none-eabi-objcopy  # Sửa từ CO thành OC
+CO = arm-none-eabi-objcopy  
 AS = arm-none-eabi-as
 LD = arm-none-eabi-ld
-SIZE = arm-none-eabi-size  # Sửa lỗi "aebi" thành "eabi"
+SIZE = arm-none-eabi-size  
 SF = st-flash
 
 # Define the linker script location and chip architecture
@@ -14,7 +14,7 @@ LD_SCRIPT = ../linker/stm32f103c8t6_ls.ld
 
 # Define the include and startup location
 INCLUDES = -I./Inc
-STARTUP = ../startup/stm32f103c8t8_startup.s
+STARTUP = ../startup/stm32f103c8t6_startup.s
 
 # Define the source and obj location
 SRC_DIR = ./Src
@@ -28,8 +28,8 @@ $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
 
 # Define C flags and Linker Flags
-CFLAGS = -g -Wall -mcpu=$(CPU) $(INCLUDES) -mthumb  # Sửa từ $(INCLUDE) thành $(INCLUDES)
-LDFLAGS = -T$(LD_SCRIPT) -mcpu=$(CPU) -mthumb -Wall -nostartfiles
+CFLAGS = -g -Wall -mcpu=$(CPU) $(INCLUDES) -mthumb -O0 
+LDFLAGS = -T$(LD_SCRIPT) -mcpu=$(CPU) -mthumb -Wall -nostartfiles $(STARTUP)
 
 # Define address for flash
 FLASHADDR = 0x08000000
@@ -45,7 +45,7 @@ $(TARGET).elf: $(OBJS)
 	$(SIZE) $(TARGET).elf
 
 $(TARGET).bin: $(TARGET).elf
-	$(OC) -O binary $(TARGET).elf $(TARGET).bin
+	$(CO) -O binary $(TARGET).elf $(TARGET).bin
 
 flash: $(TARGET).bin
 	$(SF) --reset write $(TARGET).bin $(FLASHADDR)
