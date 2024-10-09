@@ -156,8 +156,17 @@ void GPIO_PeriClockControl(GPIO_RegDef_t *pGPIOx, uint8_t EnorDi)
 uint8_t GPIO_ReadFromInputPin(GPIO_RegDef_t *GPIOx, uint16_t PinNumber)
 {
 	uint8_t value;
-	value = (uint8_t)((GPIOx->IDR >> PinNumber) & 0x01);
-	return value;
+	if(GPIOx->IDR & PinNumber)
+	{
+		value = 1;
+		return value;
+	}
+	else
+	{
+		value = 0;
+		return value;
+	}
+
 }
 uint16_t GPIO_ReadFromInputPort(GPIO_RegDef_t *GPIOx)
 {
@@ -167,19 +176,42 @@ uint16_t GPIO_ReadFromInputPort(GPIO_RegDef_t *GPIOx)
 }
 void GPIO_WriteToOutputPin(GPIO_RegDef_t *GPIOx, uint16_t PinNumber, uint8_t value)
 {
-	uint8_t temp;
-	temp = value << PinNumber;
-	GPIOx->ODR = temp;
+	if(value & 1)
+	{
+		GPIOx->BSRR = PinNumber;
+	}else
+	{
+		GPIOx->BRR = PinNumber;
+	}
 }
 void GPIO_WriteToOutputPort(GPIO_RegDef_t *GPIOx, uint16_t value)
 {
 	GPIOx->ODR = value;
 }
-uint8_t GPIO_ReadFromOutputPin(GPIO_RegDef_t *GPIOx, uint16_t PinNumber);
-uint16_t GPIO_ReadFromOutputPort(GPIO_RegDef_t *GPIOx);
+uint8_t GPIO_ReadFromOutputPin(GPIO_RegDef_t *GPIOx, uint16_t PinNumber)
+{
+	if(GPIOx->ODR & PinNumber)
+	{
+		return 1;
+	}else 
+	{
+		return 0;
+	}
+}
+uint16_t GPIO_ReadFromOutputPort(GPIO_RegDef_t *GPIOx)
+{
+	return (uint16_t)GPIOx->ODR;
+}
 void GPIO_ToggleOutputPin(GPIO_RegDef_t *GPIOx, uint16_t PinNumber)
 {
-	GPIOx->ODR ^= (uint32_t) PinNumber;
+	if(GPIOx->ODR & PinNumber)
+	{
+		GPIOx->BRR |= (uint32_t) PinNumber;
+	}else
+	{
+		GPIOx->BSRR |= PinNumber;
+	}
+
 }
 
 /*

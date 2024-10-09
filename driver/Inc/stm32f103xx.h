@@ -135,6 +135,23 @@ typedef struct
 	__vo uint32_t STIR;
 }NVIC_RegDef_t;
 
+/*
+ * SPI register defination structure
+ */
+
+typedef struct
+{
+	__vo uint32_t CR1;	/* Address offset: 0x00 */	
+	__vo uint32_t CR2; 	/* Address offset: 0x04 */
+	__vo uint32_t SR;  	/* Address offset: 0x08 */
+	__vo uint32_t DR; 	/* Address offset: 0x0C */
+	__vo uint32_t CRCPR; 	/* Address offset: 0x10 */
+	__vo uint32_t RXCRCR;	/* Address offset: 0x14 */
+	__vo uint32_t TXCRCR; 	/* Address offset: 0x18 */
+	__vo uint32_t I2SCFRG; 	/* Address offset: 0x1C */
+	__vo uint32_t I2SPR; 	/* Address offset: 0x20 */
+}SPI_RegDef_t;
+		
 
 /*
  * Define BIT mask
@@ -175,6 +192,18 @@ typedef struct
 
 #define RCC		((RCC_RegDef_t *)RCC_BASEADDR)
 #define EXTI 		((EXTI_RegDef_t *)EXTI_BASEADDR)
+
+
+/*
+ * SPI defination
+ */
+
+#define SPI1 		((SPI_RegDef_t *)SPI1_BASEADDR)
+#define SPI2		((SPI_RegDef_t *)SPI2_BASEADDR)
+#define SPI3		((SPI_RegDef_t *)SPI3_BASEADDR)
+
+
+
 
 /*
  * clock enable macros for GPIOx peripherals
@@ -256,4 +285,6 @@ typedef struct
 #define ENABLE 			1
 #define DISABLE 		0
 
+#define SET			ENABLE
+#define CLEAR			DISABLE
 #endif
