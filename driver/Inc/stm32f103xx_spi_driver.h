@@ -1,7 +1,7 @@
 #ifndef __STM32F103XX_SPI_DRIVER_H__
 #define __STM32F103XX_SPI_DRIVER_H__
 
-#include "stmf103xx.h"
+#include "stm32f103xx.h"
 
 /* ------------------ Define macro for SPI ---------------*/
 
@@ -63,20 +63,20 @@ typedef enum
 
 
 
-
 /*
  * Configuration structure for SPIx Peripheral
  */
 
 typedef struct
 {
-	uint8_t SPI_DeviceMode;
-	uint8_t SPI_BusConfig;
-	uint8_t SPI_SclkSpeed;
-	uint8_t SPI_DFF;
-	uint8_t SPI_CPOL;
-	uint8_t SPI_CPHA;
-	uint8_t SPI_SSM;
+	SPI_DeviceMode_t SPI_DeviceMode;
+	SPI_BusConfig_t SPI_BusConfig;
+	SPI_SclkSpeed_t SPI_SclkSpeed;
+	SPI_DFF_t SPI_DFF;
+	SPI_CPOL_t SPI_CPOL;
+	SPI_CPHA_t SPI_CPHA;
+	SPI_SSM_t SPI_SSM;
+	SPI_FrameFormat_t SPI_FF;
 }SPI_Config_t;
 
 
@@ -152,6 +152,12 @@ uint8_t SPI_GetFlagStatus(SPI_RegDef_t *pSPIx, uint8_t Flag);
 void SPI_SendData(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t Len);
 
 void SPI_ReceiveData(SPI_RegDef_t *pSPIx, uint8_t *pRxBuffer, uint32_t Len);
+
+
+void SPI_SendDataIT(SPI_RegDef_t *pSPIx,SPI_Config_t *pSPIConfig, uint8_t *pTxBuffer, uint32_t Len);
+
+void SPI_ReceiveDataIT(SPI_RegDef_t *pSPIx,SPI_Config_t *pSPIConfig,  uint8_t *pRxBuffer, uint32_t Len);
+
 
 
 

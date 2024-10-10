@@ -153,6 +153,24 @@ typedef struct
 }SPI_RegDef_t;
 		
 
+
+/*
+ * I2C register defination structure
+ */
+
+typedef struct
+{
+	__vo uint32_t CR1;	/* Control register 1 | Address offset: 0x00 */
+	__vo uint32_t CR2;	/* Control regsiter 2 | Adderss offset: 0x04 */
+	__vo uint32_t OAR1;	/* Own address register 1 | Address offset: 0x08 */
+	__vo uint32_t OAR2;	/* Own address register 2 | Address offset: 0x0c */
+	__vo uint32_t DR;	/* Data register | Address offset: 0x10 */
+	__vo uint32_t SR1;	/* Status register 1 | Address offset: 0x14 */
+	__vo uint32_t SR2;	/* Status register 2 | Address offset: 0x18 */
+	__vo uint32_t CCR;	/* Clock control register | Address offset: 0x1C */
+	__vo uint32_t TRISE;	/* TRISE Register | Address offset: 0x20 */
+
+}I2C_RegDef_t;
 /*
  * Define BIT mask
  */

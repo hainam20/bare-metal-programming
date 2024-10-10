@@ -8,7 +8,7 @@ void SPI_PeriClockControl(SPI_RegDef_t *pSPIx, uint8_t EnorDi)
 		if(pSPIx == SPI1)
 		{
 			SPI1_PCLK_EN();
-		}else if(pSPix == SPI2)
+		}else if(pSPIx == SPI2)
 		{
 			SPI2_PCLK_EN();
 		}else if(pSPIx == SPI3)
@@ -21,7 +21,7 @@ void SPI_PeriClockControl(SPI_RegDef_t *pSPIx, uint8_t EnorDi)
 		if(pSPIx == SPI1)
 		{
 			SPI1_PCLK_DI();
-		}else if(pSPix == SPI2)
+		}else if(pSPIx == SPI2)
 		{
 			SPI2_PCLK_DI();
 		}else if(pSPIx == SPI3)
@@ -38,7 +38,7 @@ void SPI_PeriClockControl(SPI_RegDef_t *pSPIx, uint8_t EnorDi)
 
 
 
-void SPI_Init(SPI_Regdef_t *pSPIx, SPI_Congfig_t *SPI_Config)
+void SPI_Init(SPI_RegDef_t *pSPIx, SPI_Config_t *SPI_Config)
 {
 	uint32_t tempreg = 0;
 	
@@ -73,30 +73,30 @@ void SPI_Init(SPI_Regdef_t *pSPIx, SPI_Congfig_t *SPI_Config)
 	}	
 
 	/* configure LSBfirst */
-	tempreg |= (SPI_FF << SPI_CR1_LSB)
+	tempreg |= (SPI_Config->SPI_FF << SPI_CR1_LSB);
 		
 	pSPIx->CR1 = tempreg;
 }
 void SPI_SendData(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
 {
 	SPI_PeripheralControl(pSPIx, ENABLE);
-	while(len > 0)
+	while(Len > 0)
 	{
-		while(!(GetFlagStatus(pSPIx, SPI_TXE_FLAG)));
+		while(!(SPI_GetFlagStatus(pSPIx, SPI_TXE_FLAG)));
 		if(pSPIx->CR1 & (1 << SPI_CR1_DFF))
 		{
 			pSPIx->DR = *((uint16_t *) pTxBuffer);
-			len -= 2;
+			Len -= 2;
 			(uint16_t *)pTxBuffer++;
 		}else
 		{
 			pSPIx->DR = *pTxBuffer;
-			--len;
+			--Len;
 			pTxBuffer++;
 		}
 
 	}
-	while(!(GetFlagStatus(pSPIx, SPI_BSY_FLAG));
+	while(!(SPI_GetFlagStatus(pSPIx, SPI_BSY_FLAG)));
 	SPI_PeripheralControl(pSPIx, DISABLE);
 
 }
@@ -104,31 +104,38 @@ void SPI_SendData(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
 void SPI_ReceiveData(SPI_RegDef_t *pSPIx, uint8_t *pRxBuffer, uint32_t Len)
 {
 	SPI_PeripheralControl(pSPIx, ENABLE);
-	while(len > 0)
+	while(Len > 0)
 	{
-		while(!(GetFlagStatus(pSPIx, SPI_RXNE_FLAG)));
+		while(!(SPI_GetFlagStatus(pSPIx, SPI_RXNE_FLAG)));
 		if(pSPIx->CR1 & (1 << SPI_CR1_DFF))
 		{
-			pRXBuffer = *((uint16_t *)pSPIx->DR);
-			len-=2;
-			(uint16_t *)pRXBuffer++;
+			pRxBuffer = *((uint16_t *)pSPIx->DR);
+			Len-=2;
+			(uint16_t *)pRxBuffer++;
 		}else
 		{
 			pRxBuffer = pRxBuffer;
-			--len;
+			--Len;
 			pRxBuffer++;
 		}
 	}
 
-	while(!(GetFlagStatus(pSPIx, SPI_BSY_FLAG));
+	while(!(SPI_GetFlagStatus(pSPIx, SPI_BSY_FLAG)));
 	SPI_PeripheralControl(pSPIx, DISABLE);
 }
 		
 
 				
 
+void SPI_SendDataIT(SPI_RegDef_t *pSPIx,SPI_Config_t *pSPIConfig, uint8_t *pTxBuffer, uint32_t Len)
+{
+	
+}
 
+void SPI_ReceiveDataIT(SPI_RegDef_t *pSPIx,SPI_Config_t *pSPIConfig,  uint8_t *pRxBuffer, uint32_t Len)
+{
 
+}
 
 void SPI_PeripheralControl(SPI_RegDef_t *pSPIx, uint8_t EnorDi)
 {
