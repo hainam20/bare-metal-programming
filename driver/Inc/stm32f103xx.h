@@ -220,7 +220,12 @@ typedef struct
 #define SPI2		((SPI_RegDef_t *)SPI2_BASEADDR)
 #define SPI3		((SPI_RegDef_t *)SPI3_BASEADDR)
 
+/*
+ * I2C defination
+ */
 
+#define I2C1		((I2C_RegDef_t *)I2C1_BASEADDR)
+#define I2C2		((I2C_RegDef_t *)I2C2_BASEADDR)
 
 
 /*
@@ -305,4 +310,7 @@ typedef struct
 
 #define SET			ENABLE
 #define CLEAR			DISABLE
+
+
+#include "stm32f103xx_i2c_driver.h"
 #endif
