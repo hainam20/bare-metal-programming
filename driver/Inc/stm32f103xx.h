@@ -171,6 +171,25 @@ typedef struct
 	__vo uint32_t TRISE;	/* TRISE Register | Address offset: 0x20 */
 
 }I2C_RegDef_t;
+
+/*
+ * USART register defination structure
+ */
+
+typedef struct
+{
+	__vo uint32_t SR;	/* Status register */
+	__vo uint32_t DR;	/* Data register */
+	__vo uint32_t BRR;	/* Baud rate register */
+	__vo uint32_t CR1;	/* Control register 1 */
+	__vo uint32_t CR2;	/* Control register 2 */
+	__vo uint32_t CR3;	/* Control register 3 */
+	__vo uint32_t GTPR;	/* Guard time and presaler register */
+}USART_RegDef_t;
+
+
+
+
 /*
  * Define BIT mask
  */
@@ -226,6 +245,15 @@ typedef struct
 
 #define I2C1		((I2C_RegDef_t *)I2C1_BASEADDR)
 #define I2C2		((I2C_RegDef_t *)I2C2_BASEADDR)
+
+/*
+ * USART defination
+ */
+
+#define USART1 		((USART_RegDef_t *)USART1_BASEADDR)
+#define USART2		((USART_RegDef_t *)USART2_BASEADDR)
+#define USART3		((USART_RegDef_t *)USART3_BASEADDR)
+
 
 
 /*
@@ -313,4 +341,8 @@ typedef struct
 
 
 #include "stm32f103xx_i2c_driver.h"
+#include "stm32f103xx_gpio_driver.h"
+#include "stm32f103xx_spi_driver.h"
+#include "stm32f103xx_uart_driver.h"
+#include "stm32f103xx_rcc_driver.h"
 #endif

@@ -15,13 +15,13 @@ typedef enum
 	I2C_SCL_SPEED_SM = 0, 		/* Standard mode 2MHz */
 	I2C_SCL_SPEED_FM,		/* Fast mode 4MHz */
 }I2C_Speed_t;
-
+/*
 typedef enum
 {
 	I2C_ACK_DISABLE = 0,
         I2C_ACK_ENABLE,
 }I2C_ACKControl_t;
-
+*/
 typedef enum
 {
 	I2C_FM_DUTY_2 = 0,
@@ -33,7 +33,7 @@ typedef struct
 {
 	uint8_t I2C_DeviceAddress;
 	I2C_Speed_t I2C_SCLSpeed;
-	I2C_ACKControl_t I2C_ACKControl;
+	uint8_t I2C_ACKControl;
 	I2C_FMDuty_t I2C_FMDutyCycle;
 }I2C_Config_t;
 
@@ -119,7 +119,7 @@ typedef struct
  */
 
 #define I2C_FLAG_TXE		(1 << I2C_SR1_TXE)
-#define I2C_FLAG_RXE		(1 << I2C_SR1_RXE)
+#define I2C_FLAG_RXNE		(1 << I2C_SR1_RXNE)
 #define I2C_FLAG_SB		(1 << I2C_SR1_SB)
 #define I2C_FLAG_OVR		(1 << I2C_SR1_OVR)
 #define I2C_FLAG_AF 		(1 << I2C_SR1_AF)
@@ -132,7 +132,8 @@ typedef struct
 #define I2C_FLAG_TIMEOUT	(1 << I2C_SR1_TIMEOUT)
 
 
-
+#define I2C_ACK_ENABLE 		ENABLE
+#define I2C_ACK_DISABLE		DISABLE
 
 /* 
  * SPI Init and DeInit
@@ -152,13 +153,28 @@ void I2C_PeriClockControl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi);
 void I2C_PeripheralControl(I2C_RegDef_t *I2Cx, uint8_t EnorDi);
 
 uint8_t I2C_GetFlagStatus(I2C_RegDef_t *pI2Cx, uint8_t FlagName);
+
+
+/* Other I2C funtion */
+
+void I2C_ManageAck(I2C_RegDef_t *pI2Cx, uint8_t EnorDi);
+
+
 /*
  * SPI Send and Receive data
  */
 
+
+
 void I2C_MasterSendData(I2C_RegDef_t *pI2Cx, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr);
 
-void I2C_MasterReceiveData(I2C_RegDef_t *pI2Cx, uint8_t *pRxBuffer, uint32_t Len, uint8_t SlaveAddr);
+void I2C_MasterReceiveData(I2C_RegDef_t *pI2Cx, uint8_t *pRxBuffer, uint32_t Len, uint8_t SlaveAddr, I2C_Config_t *I2CConfig);
+
+
+void I2C_SlaveSendData(I2C_RegDef_t *pI2Cx, uint8_t data);
+
+uint8_t I2C_SlaveReceiveData(I2C_RegDef_t *pI2Cx);
+
 
 /*
  * I2C Interrupt 
@@ -166,9 +182,6 @@ void I2C_MasterReceiveData(I2C_RegDef_t *pI2Cx, uint8_t *pRxBuffer, uint32_t Len
 
 void I2CIRQConfig(uint8_t IRQNumber, uint8_t EnorDi);
 void I2CIRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
-
-
-
 
 
 

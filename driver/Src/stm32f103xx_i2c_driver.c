@@ -1,10 +1,6 @@
 #include "stm32f103xx.h"
 
 
-
-uint16_t AHB_PreScaler[8] = {2,4,8,16,64,128,256,512};
-uint16_t APB1_PreScaler[4] = {2,4,8,16};
-
 static void I2C_GenerateStartCondition(I2C_RegDef_t *pI2Cx);
 static void I2C_GenerateStopCondition(I2C_RegDef_t *pI2Cx);
 static void I2C_ExecuteAddressPhase(I2C_RegDef_t *pI2Cx, uint8_t SlaveAddr);
@@ -44,57 +40,8 @@ void I2C_PerepheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi)
 	{
 		pI2Cx->CR1 &= ~(1 << I2C_CR1_PE);
 	}
-}	
-/*
-uint32_t RCC_GetOutputCLK()
-{
-
 }
-*/
 
-static uint32_t RCC_GetPCLK1Value(void)
-{
-	uint32_t pclk1 = 0, SystemClk = 0;
-	uint8_t clksrc = 0, temp = 0, ahbp = 0, apb1 = 0;
-	clksrc = (RCC->CFGR >> 2) & 0x03;
-	if(clksrc == 0)
-	{
-		SystemClk = 16000000;
-	}else if(clksrc == 1)
-	{
-		SystemClk = 8000000;
-	}else if(clksrc == 2)
-	{
-		//SystemClk = RCC_GetOutputCLK();
-	}
-
-	// Get value of AHB
-	temp = (RCC->CFGR >> 4) & 0x0F;
-	if(temp < 8)
-	{
-		ahbp = 1;
-	}else
-	{
-		ahbp = AHB_PreScaler[temp - 8];
-	}
-	// Get value of APB1
-	temp = (RCC->CFGR >> 8) & 0x07;
-        if(temp < 4)
-        {
-                apb1 = 1;
-        }else
-        {
-                apb1 = AHB_PreScaler[temp - 4];
-        }
-	pclk1 = (SystemClk / ahbp) / apb1;
-
-	return pclk1;
-
-
-
-		
-
-}
 
 void I2C_Init(I2C_RegDef_t *pI2Cx, I2C_Config_t *I2CConfig)
 {
@@ -180,6 +127,17 @@ static void I2C_ClearADDRFLag(I2C_RegDef_t *pI2Cx)
 	(void)dummyRead;
 }
 
+void I2C_ManageAck(I2C_RegDef_t *pI2Cx, uint8_t EnorDi)
+{
+	if(EnorDi == I2C_ACK_ENABLE)
+	{
+		pI2Cx->CR1 |= (1 << I2C_CR1_ACK);
+	}else
+	{
+		pI2Cx->CR1 &= (1 << I2C_CR1_ACK);
+	}
+}
+
 void I2C_MasterSendData(I2C_RegDef_t *pI2Cx,uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr)
 {
 	/* Generate start condition */
@@ -212,6 +170,90 @@ void I2C_MasterSendData(I2C_RegDef_t *pI2Cx,uint8_t *pTxBuffer, uint32_t Len, ui
 	I2C_GenerateStopCondition(pI2Cx);
 
 
-}
+}	
+void I2C_MasterReceiveData(I2C_RegDef_t *pI2Cx, uint8_t *pRxBuffer, uint32_t Len, uint8_t SlaveAddr, I2C_Config_t *I2CConfig)
+{
+	 /* Generate Start condition */
+  	I2C_GenerateStartCondition(pI2Cx);
+
+	/* Confirm that start generation is completed by checking the SB flag in SR1 */
+	while(!(I2C_GetFlagStatus(pI2Cx, I2C_FLAG_SB)));
+
+	/* Send the address of the slave with r/w bit (total 8 bits) */
+	I2C_ExecuteAddressPhase(pI2Cx, SlaveAddr);
+
+	/*Confirm that address phase is completed by checking the ADDR flag in SR1*/
+	while(!(I2C_GetFlagStatus(pI2Cx, I2C_FLAG_ADDR)));
+	
+
+	if(Len == 1)
+	{
+		/* Disable ACK */
+		I2C_ManageAck(pI2Cx, I2C_ACK_DISABLE);
+	
+		/*Clear the ADDR flag */
+		I2C_ClearADDRFLag(pI2Cx);
+
+		while(!(I2C_GetFlagStatus(pI2Cx, I2C_FLAG_RXNE)));
+	
+		/* Generate Stop Condition */
+		I2C_GenerateStopCondition(pI2Cx);
+
+
+		/* Read data into buffer */
+
+		*pRxBuffer = pI2Cx->DR;
+
+
+	}
+
+	if(Len > 1)
+	{
+		/* Clear addr flag */
+		I2C_ClearADDRFLag(pI2Cx);
+
+		/* Read data */
+		for(uint32_t i = Len; i > 0; i--)
+		{
+			/* Wait until RXNE become 1 */
+			while(!(I2C_GetFlagStatus(pI2Cx, I2C_FLAG_RXNE)));
+			
+			if(i == 2)
+			{
+				/* Disable ACK */
+                		I2C_ManageAck(pI2Cx, I2C_ACK_DISABLE);
+
+                		/* Generate Stop Condition */
+                		I2C_GenerateStopCondition(pI2Cx);
+
+
+			}
+			/* Read data into buffer */
+			*pRxBuffer = pI2Cx->DR;
+			pRxBuffer++;
+
+
+
+		}
 		
+	}
+	/* Enable  ACK */
+	if(I2CConfig->I2C_ACKControl == I2C_ACK_ENABLE)
+	{
+
+        	I2C_ManageAck(pI2Cx, I2C_ACK_ENABLE);
+	}
+
+}
+
+
+void I2C_SlaveSendData(I2C_RegDef_t *pI2Cx, uint8_t data)
+{
+	pI2Cx->DR = data;
+}
+
+uint8_t I2C_SlaveReceiveData(I2C_RegDef_t *pI2Cx)
+{
+	return (uint8_t)pI2Cx->DR;
+}
 
